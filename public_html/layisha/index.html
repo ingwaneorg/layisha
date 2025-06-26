@@ -2,134 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layisha - Screenshot Upload</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layisha - Screenshot Upload</title>
+
+<!-- Theme CSS -->
+<link href="css/theme.css" rel="stylesheet">
+<!-- Font Awesome for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    .upload-zone {
+        border: 2px dashed var(--falcon-border-color);
+        border-radius: var(--falcon-border-radius);
+        padding: 4rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
     
-    <!-- Theme CSS -->
-    <link href="css/theme.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    .upload-zone:hover,
+    .upload-zone.dragover {
+        border-color: var(--falcon-primary);
+        background-color: rgba(44, 123, 229, 0.05);
+    }
     
-    <style>
-        .upload-zone {
-            border: 2px dashed var(--falcon-border-color);
-            border-radius: var(--falcon-border-radius);
-            padding: 4rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-zone:hover,
-        .upload-zone.dragover {
-            border-color: var(--falcon-primary);
-            background-color: rgba(44, 123, 229, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 4rem;
-            color: var(--falcon-primary);
-            margin-bottom: 1rem;
-        }
-        
-        .hidden-file-input {
-            display: none;
-        }
-        
-        .result-section {
-            display: none;
-        }
-    </style>
+    .upload-icon {
+        font-size: 4rem;
+        color: var(--falcon-primary);
+        margin-bottom: 1rem;
+    }
+    
+    .hidden-file-input {
+        display: none;
+    }
+    
+    .result-section {
+        display: none;
+    }
+</style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                
-                <!-- Header -->
-                <div class="text-center mb-5">
-                    <h1 class="display-4 mb-3">Layisha</h1>
-                    <p class="lead text-muted">Quick screenshot uploads to the cloud</p>
-                </div>
-                
-                <!-- API Key Warning -->
-                <div id="apiKeyWarning" class="alert alert-warning d-none" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>No API key detected!</strong> Please use the bookmarked URL with your API key.
-                </div>
-                
-                <!-- Upload Card -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="upload-zone" id="uploadZone">
-                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                            <h5 class="mb-3">Drop images here or paste from clipboard</h5>
-                            <p class="text-muted mb-0">
-                                Supports PNG, JPG, GIF up to 10MB<br>
-                                <a href="#" id="browseFiles" class="text-decoration-none">Browse files</a>
-                            </p>
-                        </div>
-                        
-                        <!-- Progress -->
-                        <div class="progress mt-3 d-none" id="progressContainer">
-                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Hidden File Input -->
-                <input type="file" id="fileInput" class="hidden-file-input" accept="image/*">
-                
-                <!-- Result Card -->
-                <div class="result-section" id="resultSection">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="fas fa-check-circle text-success me-2"></i>
-                                Upload Complete
-                            </h5>
-                            
-                            <!-- URL Display -->
-                            <div class="mb-3">
-                                <label class="form-label">Public URL:</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="resultUrl" readonly>
-                                    <button class="btn btn-primary" type="button" id="copyBtn">
-                                        <i class="fas fa-copy"></i> Copy
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Markdown Link -->
-                            <div class="mb-3">
-                                <label class="form-label">Markdown:</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="markdownUrl" readonly>
-                                    <button class="btn btn-outline-primary" type="button" id="copyMarkdownBtn">
-                                        <i class="fas fa-copy"></i> Copy
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Preview -->
-                            <div id="imagePreview" class="text-center"></div>
-                            
-                            <!-- Upload Another -->
-                            <div class="text-center mt-3">
-                                <button class="btn btn-secondary" id="uploadAnother">
-                                    <i class="fas fa-plus"></i> Upload Another
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Alerts -->
-                <div id="alertContainer"></div>
-                
-            </div>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+            
+        <!-- Header -->
+        <div class="text-center mb-5">
+          <h1 class="display-4 mb-3">Layisha</h1>
+          <p class="lead text-muted">Quick screenshot uploads to the cloud</p>
         </div>
+            
+        <!-- API Key Warning -->
+        <div id="apiKeyWarning" class="alert alert-warning border-0 d-flex align-items-center" role="alert">
+          <div class="bg-warning me-3 icon-item"><span class="fas fa-exclamation-circle text-white fs-6"></span></div>
+          No API key detected ~ please use the bookmarked URL with your API key.
+        </div>
+            
+        <!-- Upload Card -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="upload-zone" id="uploadZone">
+              <i class="fas fa-cloud-upload-alt upload-icon"></i>
+              <h5 class="mb-3">Drop images here or paste from clipboard</h5>
+              <p class="text-muted mb-0">
+                Supports PNG, JPG, GIF up to 10MB<br>
+                <a href="#" id="browseFiles" class="text-decoration-none">Browse files</a>
+              </p>
+            </div>
+                
+            <!-- Progress -->
+            <div class="progress mt-3 d-none" id="progressContainer">
+              <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+            
+        <!-- Hidden File Input -->
+        <input type="file" id="fileInput" class="hidden-file-input" accept="image/*">
+
+        <!-- Alerts -->
+        <div id="alertContainer"></div>
+        
+        <!-- Result Card -->
+        <div class="result-section" id="resultSection">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                Upload Complete
+              </h5>
+                        
+              <!-- URL Display -->
+              <div class="mb-3">
+                <label class="form-label">Public URL:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="resultUrl" readonly>
+                  <button class="btn btn-primary" type="button" id="copyBtn">
+                    <i class="fas fa-copy"></i> Copy
+                  </button>
+                </div>
+              </div>
+                     
+              <!-- Markdown Link -->
+              <div class="mb-3">
+                <label class="form-label">Markdown:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="markdownUrl" readonly>
+                  <button class="btn btn-outline-primary" type="button" id="copyMarkdownBtn">
+                    <i class="fas fa-copy"></i> Copy
+                  </button>
+                </div>
+              </div>
+                        
+              <!-- Preview -->
+              <div id="imagePreview" class="text-center"></div>
+  
+            </div>
+          </div>
+        </div>
+         
+      </div>
     </div>
+  </div>
+
   <script src="js/layisha.js"></script>    
+
 </body>
 </html>
