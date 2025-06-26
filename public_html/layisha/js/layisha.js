@@ -1,7 +1,7 @@
 class LayishaUploader {
     constructor() {
         this.apiKey = this.getApiKeyFromUrl();
-        this.backendUrl = 'https://api.layisha.ingwane.org'; // Update with your backend URL
+        this.backendUrl = 'http://192.168.1.227:8080'; // Update with your backend URL
         this.initializeElements();
         this.setupEventListeners();
         this.checkApiKey();
@@ -108,6 +108,7 @@ class LayishaUploader {
 
     
     // TEMPORARY: Mock upload for testing
+    /*
     async uploadFile(file) {
         if (!this.apiKey) {
             this.showAlert('danger', 'API key required. Please use the bookmarked URL.');
@@ -134,8 +135,9 @@ class LayishaUploader {
         this.showUploadResult(mockUrl);
         this.showUploadProgress(false);
     }
+    */
 
-    /*
+    // Production settings
     async uploadFile(file) {
         if (!this.apiKey) {
             this.showAlert('danger', 'API key required. Please use the bookmarked URL.');
@@ -180,7 +182,6 @@ class LayishaUploader {
             this.showUploadProgress(false);
         }
     }
-    */
 
     showUploadProgress(show) {
         if (show) {
