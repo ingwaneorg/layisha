@@ -1,6 +1,7 @@
 import os
 import uuid
 import secrets
+from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google.cloud import storage
@@ -54,11 +55,12 @@ def generate_filename(original_filename):
         extension = original_filename.rsplit('.', 1)[1].lower()
     else:
         extension = 'png'  # Default extension
-    
-    # Generate short random filename
-    random_name = secrets.token_urlsafe(8)  # Generates ~11 character string
-    return f"{random_name}.{extension}"
 
+    # Generate short random filename with YYMMDD in front
+    timestamp = datetime.now().strftime('%y%m%d')
+    random_name = secrets.token_urlsafe(4)  # 6 chars
+    return f"{timestamp}-{random_name}.{extension}"
+    
 def validate_api_key():
     """Validate the API key from the Authorization header."""
     if not API_KEY:
@@ -142,7 +144,6 @@ def upload_image():
             bucket = storage_client.bucket(BUCKET_NAME)
             blob = bucket.blob(filename)
             blob.upload_from_string(file_data, content_type=mime_type)
-            blob.make_public()
             public_url = f"https://storage.googleapis.com/{BUCKET_NAME}/{filename}"
         
         except Exception as e:
