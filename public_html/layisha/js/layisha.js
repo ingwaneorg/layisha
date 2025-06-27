@@ -1,7 +1,7 @@
 class LayishaUploader {
     constructor() {
         this.apiKey = this.getApiKeyFromUrl();
-        this.backendUrl = 'http://192.168.1.227:8080'; // Update with your backend URL
+        this.backendUrl = 'http://192.168.1.227:5000'; // Update with your backend URL
         this.initializeElements();
         this.setupEventListeners();
         this.checkApiKey();

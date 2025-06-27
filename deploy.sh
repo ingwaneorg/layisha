@@ -10,8 +10,11 @@ set -e  # Exit on any error
 # ============================================================================
 PROJECT_ID="ingwane-layisha"
 SERVICE_NAME="layisha"
+
+# always use us-east1 for free tier
 REGION="us-east1"
 
+# Same service account structure for all projects
 SERVICE_ACCOUNT_KEY="${HOME}/.gcp-keys/${PROJECT_ID}-key.json"
 
 # ============================================================================
@@ -106,7 +109,7 @@ if gcloud run deploy "$SERVICE_NAME" \
     --region "$REGION" \
     --allow-unauthenticated \
     --max-instances 1 \
-    --memory 256Mi \
+    --memory 512Mi \
     --timeout 300 \
     --set-env-vars SECRET_KEY="$SECRET_KEY" \
     --quiet; then
