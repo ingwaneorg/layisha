@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Layisha - Image Upload</title>
+<title>Layisha - File Share</title>
 
 <!-- Theme CSS -->
 <link href="css/theme.css" rel="stylesheet">
@@ -49,7 +49,7 @@
         <!-- Header -->
         <div class="text-center mb-5">
           <h1 class="display-4 mb-3">Layisha</h1>
-          <p class="lead text-muted">Quick screenshot uploads to the cloud</p>
+          <p class="lead text-muted">Quick file sharing</p>
         </div>
             
         <!-- API Key Warning -->
@@ -63,9 +63,9 @@
           <div class="card-body">
             <div class="upload-zone" id="uploadZone">
               <i class="fas fa-cloud-upload-alt upload-icon"></i>
-              <h5 class="mb-3">Drop images here or paste from clipboard</h5>
+              <h5 class="mb-3">Drop a file here or paste from clipboard</h5>
               <p class="text-muted mb-0">
-                Supports PNG, JPG, GIF up to 10MB<br>
+                Any file type, up to 10MB<br>
                 <a href="#" id="browseFiles" class="text-decoration-none">Browse files</a>
               </p>
             </div>
@@ -78,7 +78,7 @@
         </div>
             
         <!-- Hidden File Input -->
-        <input type="file" id="fileInput" class="hidden-file-input" accept="image/*">
+        <input type="file" id="fileInput" class="hidden-file-input">
 
         <!-- Alerts -->
         <div id="alertContainer"></div>
@@ -102,20 +102,6 @@
                   </button>
                 </div>
               </div>
-                     
-              <!-- Markdown Link -->
-              <div class="mb-3">
-                <label class="form-label">Markdown:</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="markdownUrl" readonly>
-                  <button class="btn btn-outline-primary" type="button" id="copyMarkdownBtn">
-                    <i class="fas fa-copy"></i> Copy
-                  </button>
-                </div>
-              </div>
-                        
-              <!-- Preview -->
-              <div id="imagePreview" class="text-center"></div>
   
             </div>
           </div>

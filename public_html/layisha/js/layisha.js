@@ -1,7 +1,7 @@
 class LayishaUploader {
     constructor() {
         this.apiKey = this.getApiKeyFromUrl();
-        this.backendUrl = 'http://192.168.1.227:5000'; // Update with your backend URL
+        this.backendUrl = '';
         this.initializeElements();
         this.setupEventListeners();
         this.checkApiKey();
@@ -21,14 +21,11 @@ class LayishaUploader {
         this.fileInput = document.getElementById('fileInput');
         this.resultSection = document.getElementById('resultSection');
         this.resultUrl = document.getElementById('resultUrl');
-        this.markdownUrl = document.getElementById('markdownUrl');
         this.copyBtn = document.getElementById('copyBtn');
-        this.copyMarkdownBtn = document.getElementById('copyMarkdownBtn');
         this.alertContainer = document.getElementById('alertContainer');
         this.apiKeyWarning = document.getElementById('apiKeyWarning');
         this.progressContainer = document.getElementById('progressContainer');
         this.progressBar = document.querySelector('.progress-bar');
-        this.imagePreview = document.getElementById('imagePreview');
     }
     
     checkApiKey() {
@@ -61,9 +58,7 @@ class LayishaUploader {
         // Paste from clipboard
         document.addEventListener('paste', this.handlePaste.bind(this));
         
-        // Copy buttons
         this.copyBtn.addEventListener('click', () => this.copyToClipboard(this.resultUrl.value));
-        this.copyMarkdownBtn.addEventListener('click', () => this.copyToClipboard(this.markdownUrl.value));
         
     }
     
@@ -107,48 +102,12 @@ class LayishaUploader {
     }
 
     
-    // TEMPORARY: Mock upload for testing
-    /*
     async uploadFile(file) {
         if (!this.apiKey) {
             this.showAlert('danger', 'API key required. Please use the bookmarked URL.');
             return;
         }
 
-        if (!file.type.startsWith('image/')) {
-            this.showAlert('danger', 'Please select an image file.');
-            return;
-        }
-
-        if (file.size > 10 * 1024 * 1024) { // 10MB
-            this.showAlert('danger', 'File size must be less than 10MB.');
-            return;
-        }
-
-        // Simulate upload delay
-        this.showUploadProgress(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Simulate successful upload
-        const mockUrl = `https://storage.googleapis.com/ingwane-layisha/octopus.png`;
-        //const mockUrl = `https://storage.googleapis.com/ingwane-layisha/test-${Date.now()}.png`;
-        this.showUploadResult(mockUrl);
-        this.showUploadProgress(false);
-    }
-    */
-
-    // Production settings
-    async uploadFile(file) {
-        if (!this.apiKey) {
-            this.showAlert('danger', 'API key required. Please use the bookmarked URL.');
-            return;
-        }
-        
-        if (!file.type.startsWith('image/')) {
-            this.showAlert('danger', 'Please select an image file.');
-            return;
-        }
-        
         if (file.size > 10 * 1024 * 1024) { // 10MB
             this.showAlert('danger', 'File size must be less than 10MB.');
             return;
@@ -158,7 +117,7 @@ class LayishaUploader {
             this.showUploadProgress(true);
             
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('file', file);
             
             const response = await fetch(`${this.backendUrl}/upload`, {
                 method: 'POST',
@@ -194,13 +153,8 @@ class LayishaUploader {
     }
     
     showUploadResult(url) {
-        // Set URLs
         this.resultUrl.value = url;
-        this.markdownUrl.value = `![Image](${url})`;
-        
-        // Show preview
-        this.imagePreview.innerHTML = `<img src="${url}" alt="Uploaded image" class="img-thumbnail mt-3" style="max-width: 300px;">`;
-        
+
         // Show result section
         this.resultSection.style.display = 'block';
         this.resultSection.scrollIntoView({ behavior: 'smooth' });

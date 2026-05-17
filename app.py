@@ -2,7 +2,7 @@ import os
 import uuid
 import secrets
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from google.cloud import storage
 from werkzeug.utils import secure_filename
@@ -17,20 +17,9 @@ API_KEY = os.getenv('LAYISHA_API_KEY')
 
 # Configuration
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB in bytes
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-ALLOWED_MIME_TYPES = {
-    'image/png', 'image/jpeg', 'image/jpg', 
-    'image/gif', 'image/webp'
-}
 
 # CORS configuration
-CORS(app, origins=[
-    'https://ingwane.org',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://192.168.1.227:8000',
-    'http://192.168.1.229:8000',
-])
+CORS(app, origins='*')
 
 # Initialize Google Cloud Storage client in not in debug
 if not app.debug:
@@ -39,22 +28,13 @@ else:
     storage_client = None  # Won't be used in debug (local testing) mode
 
 
-def allowed_file(filename):
-    """Check if the file extension is allowed."""
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def allowed_mime_type(mime_type):
-    """Check if the MIME type is allowed."""
-    return mime_type in ALLOWED_MIME_TYPES
-
 def generate_filename(original_filename):
     """Generate a unique filename while preserving the extension."""
     # Get file extension
     if '.' in original_filename:
         extension = original_filename.rsplit('.', 1)[1].lower()
     else:
-        extension = 'png'  # Default extension
+        extension = 'bin'  # Default extension
 
     # Generate short random filename with YYMMDD in front
     timestamp = datetime.now().strftime('%y%m%d')
@@ -79,6 +59,14 @@ def validate_api_key():
     
     return True, None
 
+@app.route('/')
+def index():
+    return send_from_directory('public_html/layisha', 'index.html')
+
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_from_directory('public_html/layisha', filename)
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint."""
@@ -98,10 +86,10 @@ def upload_image():
         return jsonify({'error': error}), 401
     
     # Check if file is in request
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file provided'}), 400
-    
-    file = request.files['image']
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+
+    file = request.files['file']
     
     # Check if file was actually selected
     if file.filename == '':
@@ -119,14 +107,7 @@ def upload_image():
     # Reset file pointer
     file.seek(0)
     
-    # Validate file type by extension
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file type. Allowed: PNG, JPG, GIF, WebP'}), 400
-    
-    # Validate MIME type
-    mime_type, _ = mimetypes.guess_type(file.filename)
-    if not mime_type or not allowed_mime_type(mime_type):
-        return jsonify({'error': 'Invalid file type. Must be an image'}), 400
+    mime_type = mimetypes.guess_type(file.filename)[0] or 'application/octet-stream'
 
     # Generate unique filename
     filename = generate_filename(file.filename)
