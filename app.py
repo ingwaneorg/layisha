@@ -1,6 +1,7 @@
 import os
 import uuid
 import secrets
+from version import __version__
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
@@ -73,6 +74,7 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'service': 'layisha-backend',
+        'version': __version__,
         'bucket': BUCKET_NAME
     })
 
